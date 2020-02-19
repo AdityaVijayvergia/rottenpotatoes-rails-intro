@@ -11,27 +11,29 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @ratings = 
     redirect = false
-    if params.key?("ratings")
-      @ratings = params["ratings"].keys
-      session["ratings"] = params["ratings"]
-    elsif session.key?("ratings")
-      @ratings = session["ratings"].keys
-      params["ratings"] = session["ratings"]
+    
+    @ratings = Movie.all_ratings
+    if params.key?( 'ratings' )
+      @ratings = params[ 'ratings' ].keys
+      session[ 'ratings' ] = params[ 'ratings' ]
+      
+    elsif session.key?( 'ratings' )
+      @ratings = session['ratings'].keys
+      params['ratings'] = session['ratings']
       redirect = true
     else
-      @ratings = Movie.all_ratings
+      
     end
     @movies = Movie.with_ratings(@ratings)
     
-    sortOrder = ''
-    if params.key?(:sortOrder)
-      sortOrder = params[:sortOrder]
-      session[:sortOrder] = params[:sortOrder]
-    elsif session.key?(:sortOrder)
-      sortOrder = session[:sortOrder]
-      params[:sortOrder] = session[:sortOrder]
+    order = ''
+    if params.key?(:order)
+      order = params[:order]
+      session[:order] = params[:order]
+    elsif session.key?(:order)
+      order = session[:order]
+      params[:order] = session[:order]
       redirect = true
     end
     
@@ -41,10 +43,10 @@ class MoviesController < ApplicationController
       redirect_to movies_path(params), :method => :get
     end
     
-    @movies= case sortOrder
+    @movies= case order
       when "title", "release_date"
-        instance_variable_set("@klass_#{sortOrder}", "hilite")
-        @movies.order(sortOrder)
+        instance_variable_set("@klass_#{order}", "hilite")
+        @movies.order(order)
       else
         @movies
       end
