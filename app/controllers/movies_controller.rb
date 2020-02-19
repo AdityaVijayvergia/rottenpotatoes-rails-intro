@@ -11,7 +11,49 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    
+    @keys = Movie.get_rating_list
+    redirect = false
+    
+    if params.keys?('ratings')
+      @keys = params["ratings"].keys
+      session["ratings"] = params["ratings"]
+    
+    elsif session.key?("ratings")
+      @keys = session["ratings"].keys
+      params["ratings"] = session["ratings"]
+      redirect = true
+    
+    end
+    
+    @movies = Movie.with_ratings(@keys)
+    
+    order = ''
+    
+    if params.key?(:sortOrder)
+      order = params[:sortOrder]
+      session[:sortOrder] = order
+    
+    elsif session.key?(:sortOrder)
+      order = session[:sortOrder]
+      params[:sortOrder] = order
+      redirect = true
+    end
+    
+    # puts params
+    
+    if redirect
+      redirect_to movies_path(params), :method => :get
+    end
+    
+    @movies= case order
+      when "title", "release_date"
+        instance_variable_set("@klass_#{order}", "hilite")
+        @movies.order(order)
+      else
+        @movies
+      end
+    
   end
 
   def new
