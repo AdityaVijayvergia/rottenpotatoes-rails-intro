@@ -11,6 +11,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+    
     redirect = false
     
     @ratings = Movie.all_ratings
