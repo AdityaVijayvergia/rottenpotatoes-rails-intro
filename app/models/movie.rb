@@ -3,7 +3,7 @@ class Movie < ActiveRecord::Base
         return ['G', 'PG', 'PG-13', 'R', 'NC-17']
     end
     
-    def self.with_ratings(ratings)
-        return self.where(rating: ratings)
+    def self.search_rating(r)
+        return self.where(rating: r)
     end
 end

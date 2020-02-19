@@ -11,9 +11,10 @@ class MoviesController < ApplicationController
   end
 
   def index
-    redirect = false
+    flag = false
     
     @ratings = Movie.all_ratings
+    
     if params.key?( 'ratings' )
       @ratings = params[ 'ratings' ].keys
       session[ 'ratings' ] = params[ 'ratings' ]
@@ -21,25 +22,24 @@ class MoviesController < ApplicationController
     elsif session.key?( 'ratings' )
       @ratings = session['ratings'].keys
       params['ratings'] = session['ratings']
-      redirect = true
-    else
-      
+      flag = true
     end
-    @movies = Movie.with_ratings(@ratings)
+    
+    @movies = Movie.search_rating(@ratings)
     
     order = ''
+    
     if params.key?(:order)
       order = params[:order]
       session[:order] = params[:order]
+      
     elsif session.key?(:order)
       order = session[:order]
       params[:order] = session[:order]
-      redirect = true
+      flag = true
     end
     
-    puts params
-    
-    if redirect
+    if flag == true
       redirect_to movies_path(params), :method => :get
     end
     
