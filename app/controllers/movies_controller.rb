@@ -11,7 +11,7 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.get_rating_list
+    @ratings = 
     redirect = false
     if params.key?("ratings")
       @ratings = params["ratings"].keys
@@ -21,7 +21,7 @@ class MoviesController < ApplicationController
       params["ratings"] = session["ratings"]
       redirect = true
     else
-      @ratings = @all_ratings
+      @ratings = Movie.all_ratings
     end
     @movies = Movie.with_ratings(@ratings)
     
